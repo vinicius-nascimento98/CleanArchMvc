@@ -1,16 +1,16 @@
 ﻿using CleanArchMvc.Application.DTOs;
 using CleanArchMvc.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CleanArchMvc.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -20,8 +20,9 @@ namespace CleanArchMvc.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDTO>>>Get(){
-            
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> Get()
+        {
+
             var categories = await _categoryService.GetCategoriesAsync();
             if (categories == null)
             {
@@ -45,7 +46,7 @@ namespace CleanArchMvc.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody]CategoryDTO categoryDto)
+        public async Task<ActionResult> Post([FromBody] CategoryDTO categoryDto)
         {
             if (categoryDto == null)
             {
@@ -79,7 +80,7 @@ namespace CleanArchMvc.API.Controllers
         public async Task<ActionResult<CategoryDTO>> Delete(int id)
         {
             var category = await _categoryService.GetByIdAsync(id);
-            if(category == null)
+            if (category == null)
             {
                 return NotFound("Category not found");
             }
